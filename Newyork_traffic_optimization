@@ -1,1 +1,80 @@
+First we will load data from local machine to virtual machine by using filezila
+
+First we will create table from csv data
+create table sales_order_orcs
+ (order_number string,
+ quantity_ordered int,
+     price float,
+     order_line int,
+     sales float,
+     status string,
+     qtr_id int,
+     month_id int,
+     year_id string,
+     product_type string,
+     msrp int,
+     product_code string,
+     phone string,
+     city string,
+     state string,
+     postal_code string,
+     country string,
+     teritory string,
+     last_name string,
+     first_name string,
+     deal string)
+ row format delimited
+ fields terminated by ',';
+ 
+ 
+Create the schema for orc table
+> create table sales_order_orc
+    > (order_number string,
+    > quantity_ordered int,
+    > price float,
+    > order_line int,
+    > sales float,
+    > status striong,
+    > qtr_id int,
+    > month_id int,
+    > year_id string,
+    > product_type string,
+    > phone string,
+    > city string,
+    > state string,
+    > postal_code string,
+    > country string,
+    > teritory string,
+    > last_name string,
+    > first_name string,
+    > deal string)
+    > stored as orc;
+    
+ Migrate the data
+ from sales_order_csv insert overwrite sales_order_orcs select *;
+ 
+ Performing Group By operation
+ Calculatye total sales per year:
+ 
+  select year_id, sum(sales) from sales_order_orcs group by year_id;
+Query ID = cloudera_20230509053030_77ef2ba9-3e6a-4f57-8c21-03917223cc98
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1
+2023-05-09 05:30:40,054 Stage-1 map = 0%,  reduce = 0%
+2023-05-09 05:30:54,434 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.56 sec
+2023-05-09 05:31:06,482 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 5.08 sec
+MapReduce Total cumulative CPU time: 5 seconds 80 msec
+Ended Job = job_1683631427118_0003
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 5.08 sec   HDFS Read: 36706 HDFS Write: 81 SUCCESS
+Total MapReduce CPU Time Spent: 5 seconds 80 msec
+OK
+2003    3516979.547241211
+2004    4724162.593383789
+2005    1791486.7086791992
+
+Find a product for which maximum orders were placed
+
 
