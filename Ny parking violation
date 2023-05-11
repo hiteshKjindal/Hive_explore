@@ -1,0 +1,164 @@
+
+[cloudera@quickstart ~]$ hadoop fs -put /home/cloudera/hitesh/hive_data/Parking_Violations_Issued_-_Fiscal_Year_2017.csv  /user/cloudera/ny
+
+hive> load data inpath '/user/cloudera/ny/Parking_Violations_Issued_-_Fiscal_Year_2017.csv' into table ny_csv;
+Loading data to table default.ny_csv
+Table default.ny_csv stats: [numFiles=1, totalSize=2086913576]
+OK
+Time taken: 1.438 seconds
+hive> select * from ny_csv limit 10;
+OK
+NULL    Plate ID        Registration State      Plate Type      NULL    NULL    Vehicle Body Type       Vehicle Make    Issuing Agency  NULL    NULL    NULL    Vehicle Expiration Date Violation Location      NULL    NULL    Issuer Code     Issuer Command  Issuer Squad    Violation Time  Time First Observed     Violation County       Violation In Front Of Or Opposite        House Number    Street Name     Intersecting Street     Date First Observed     NULL    Sub Division    Violation Legal Code   Days Parking In Effect           From Hours In Effect    To Hours In Effect      Vehicle Color   Unregistered Vehicle?   NULL    Meter Number    NULL    Violation Post Code     Violation Description   No Standing or Stopping Violation       Hydrant Violation       Double Parking Violation
+NULL    GZH7067 NY      PAS     NULL    7       SUBN    TOYOT   V       0       0       0       0               0       0       0                       0143A          BX                       ALLERTON AVE (W/B) @    BARNES AVE      0       1111    D       T                               GY              2001            0              FAILURE TO STOP AT RED LIGHT
+NULL    GZH7067 NY      PAS     NULL    7       SUBN    TOYOT   V       0       0       0       0               0       0       0                       0400P          BX                       ALLERTON AVE (W/B) @    BARNES AVE      0       1111    D       T                               GY              2001            0              FAILURE TO STOP AT RED LIGHT
+NULL    AVM7975 NY      PAS     NULL    36      SUBN    GMC     V       0       0       0       0               0       0       0                       1211P          BK                       WB LINDEN BLVD @ LIN    COLN AVE        0       1180    B       T                               GY              2010            0              PHTO SCHOOL ZN SPEED VIOLATION
+NULL    GWB7054 NY      PAS     NULL    70      SUBN    TOYOT   T       59590   8590    57790   20170105        109     109     109     364933  T401    J       1217P  QF       35-11   Prince St               0       408     j3              YYYYYYY                 BL              2015            0       05      70A-Reg. Sticker Expired (NYS)
+NULL    EXZ9820 NY      PAS     NULL    36      4DSD    HONDA   V       0       0       0       0               0       0       0                       1207P          BK                       WB FLATLANDS AVE @ E    100 ST  0       1180    B       T                               GR              1997            0               PHTO SCHOOL ZN SPEED VIOLATION
+NULL    GZE1511 NY      PAS     NULL    5       4DSD    TOYOT   V       0       0       0       0               0       0       0                       1037A          BK                       NB UTICA AVE @ CHURC    H AVE   0       1111    C       T                               WH              2001            0               BUS LANE VIOLATION
+NULL    83485MH NY      COM     NULL    48      VAN     FRUEH   T       0       40404   40404   88888888        0026    26      26      359294  T103    L       0101P  NY       F       2164    Frederick Douglass B            0       408     e9                                      BROWN           2016            0       01 7    48-Bike Lane
+NULL    GEH9367 NY      PAS     NULL    70      4DSD    DODGE   T       31830   5430    5580    20170325        0078    78      78      347470  T301    E       0602P  KF       433     Dean St         0       408     j3              YYYYYYY                 GY              2011            0       19      70A-Reg. Sticker Expired (NYS)
+NULL    FYP7892 NY      PAS     NULL    14      SUBN    TOYOT   T       14380   35980   36030   20180520        0061    61      61      357808  T302    Q       0814A  KO       2623    Avenue P                0       408     c               YYYYYYY                 WH              2016            0       CC1     14-No Standing
+Time taken: 0.725 seconds, Fetched: 10 row(s)
+
+hive> alter table ny_csv set tblproperties("skip.headre.line.count"="1");
+OK
+Time taken: 0.271 seconds
+
+hive> select * from ny_csv limit 5;
+OK
+NULL    Plate ID        Registration State      Plate Type      NULL    NULL    Vehicle Body Type       Vehicle Make    Issuing Agency  NULL    NULL    NULL    Vehicle Expiration Date Violation Location      NULL    NULL    Issuer Code     Issuer Command  Issuer Squad    Violation Time  Time First Observed     Violation County       Violation In Front Of Or Opposite        House Number    Street Name     Intersecting Street     Date First Observed     NULL    Sub Division    Violation Legal Code   Days Parking In Effect           From Hours In Effect    To Hours In Effect      Vehicle Color   Unregistered Vehicle?   NULL    Meter Number    NULL    Violation Post Code     Violation Description   No Standing or Stopping Violation       Hydrant Violation       Double Parking Violation
+NULL    GZH7067 NY      PAS     NULL    7       SUBN    TOYOT   V       0       0       0       0               0       0       0                       0143A          BX                       ALLERTON AVE (W/B) @    BARNES AVE      0       1111    D       T                               GY              2001            0              FAILURE TO STOP AT RED LIGHT
+NULL    GZH7067 NY      PAS     NULL    7       SUBN    TOYOT   V       0       0       0       0               0       0       0                       0400P          BX                       ALLERTON AVE (W/B) @    BARNES AVE      0       1111    D       T                               GY              2001            0              FAILURE TO STOP AT RED LIGHT
+NULL    AVM7975 NY      PAS     NULL    36      SUBN    GMC     V       0       0       0       0               0       0       0                       1211P          BK                       WB LINDEN BLVD @ LIN    COLN AVE        0       1180    B       T                               GY              2010            0              PHTO SCHOOL ZN SPEED VIOLATION
+NULL    GWB7054 NY      PAS     NULL    70      SUBN    TOYOT   T       59590   8590    57790   20170105        109     109     109     364933  T401    J       1217P  QF       35-11   Prince St               0       408     j3              YYYYYYY                 BL              2015            0       05      70A-Reg. Sticker Expired (NYS)
+Time taken: 0.121 seconds, Fetched: 5 row(s)
+
+hive> insert overwrite table ny_csv select * from ny_csv where summons_number is not  NULL;
+Query ID = cloudera_20230511110505_1f4009d5-00a3-4579-a107-2050c1643d53
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1683822515126_0001, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1683822515126_0001/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1683822515126_0001
+Hadoop job information for Stage-1: number of mappers: 8; number of reducers: 0
+2023-05-11 11:06:14,276 Stage-1 map = 0%,  reduce = 0%
+2023-05-11 11:07:14,747 Stage-1 map = 0%,  reduce = 0%
+2023-05-11 11:08:14,401 Stage-1 map = 6%,  reduce = 0%, Cumulative CPU 71.92 sec
+2023-05-11 11:08:15,756 Stage-1 map = 19%,  reduce = 0%, Cumulative CPU 78.91 sec
+2023-05-11 11:08:19,618 Stage-1 map = 25%,  reduce = 0%, Cumulative CPU 80.69 sec
+2023-05-11 11:08:22,075 Stage-1 map = 38%,  reduce = 0%, Cumulative CPU 89.63 sec
+2023-05-11 11:08:38,557 Stage-1 map = 63%,  reduce = 0%, Cumulative CPU 115.62 sec
+2023-05-11 11:08:39,647 Stage-1 map = 69%,  reduce = 0%, Cumulative CPU 117.49 sec
+2023-05-11 11:08:40,821 Stage-1 map = 75%,  reduce = 0%, Cumulative CPU 119.54 sec
+2023-05-11 11:09:25,135 Stage-1 map = 89%,  reduce = 0%, Cumulative CPU 146.65 sec
+2023-05-11 11:09:28,609 Stage-1 map = 94%,  reduce = 0%, Cumulative CPU 148.43 sec
+2023-05-11 11:09:33,065 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 152.18 sec
+MapReduce Total cumulative CPU time: 2 minutes 32 seconds 180 msec
+Ended Job = job_1683822515126_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/ny_csv/.hive-staging_hive_2023-05-11_11-05-51_188_1358589370401467022-1/-ext-10000
+Loading data to table default.ny_csv
+Table default.ny_csv stats: [numFiles=8, numRows=1127158, totalSize=191884414, rawDataSize=190757256]
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 8   Cumulative CPU: 152.18 sec   HDFS Read: 2087062208 HDFS Write: 191885054 SUCCESS
+Total MapReduce CPU Time Spent: 2 minutes 32 seconds 180 msec
+OK
+Time taken: 227.295 seconds
+
+
+hive> select * from ny_csv limit 5;
+OK
+1413479741      60376MD NY      COM     NULL    46      DELV    MERCU   P       5430    10730   10780   0       0068    68      68      957457  0068    0000    0437P  KF       8301    4 AVE           0       408     F1              BBBBBBB ALL     ALL     BROWN   0       0       -       0
+1420174393      DMB5544 MI      PAS     NULL    40      SUBN    JEEP    P       36610   22190   13610   20180401        0030    30      30      962617  0030    0000   0550A            NY      F       529     W 142 ST                0       408     D               BBBBBBB ALL     ALL     BLK     0       2016    -       2
+1412114950      MCA0036 MD      PAS     NULL    21              INFIN   S       34050   10810   10910   0       0006    6       0       535036  MN02    0000    0846A  O343     WEST 14TH ST            0       408     D1              YYYYYYB 0830A   0900A   GRAY    0       0       -       0
+1412091640      GYP9103 NY      PAS     NULL    21      P-U     DODGE   S       10210   19350   19370   20170603        0023    23      0       540131  MN11    0000   0813A            NY      F       2205    3 AVENUE                0       408     D1              YYYYYYB 0800A   0830A   WHITE   0       2015    -       0
+1411613685      PG007G  FL      PAS     NULL    20      P-U     FORD    P       33730   77730   51030   0       0076    76      76      952287  0076    0000    0440A  KF       91      DOUGLASS ST             0       408     F1              BBBBBBB ALL     ALL     BK      0       0       -       0
+Time taken: 0.243 seconds, Fetched: 5 row(s)
+
+
+hive> create table ny_orc
+    > (
+    > summons_number int,
+    > plate_id string,
+    > registration_state string,
+    > plate_type string,
+    > issue_date date,
+    > violation_code int,
+    > vehicle_body_type string,
+    > vehicle_make string,
+    > issuing_agency string,
+    > street_code1 int,
+    > street_code2 int,
+    > street_code3 int,
+    > vehicle_expiration_date string,
+    > violation_location string,
+    > violation_precinct int,
+    > issuer_precinct int,
+    > issuer_code string,
+    > issuer_command string,
+    > issuer_squad string,
+    > violation_time string,
+    > time_first_observed string,
+    > violation_county string,
+    > violation_in_front_of_or_opposite string,
+    > house_number string,
+    > street_name string,
+    > intersecting_street string,
+    > date_first_observed string,
+    > law_section int,
+    > sub_division string,
+    > violation_legal_code string,
+    > days_parking_in_effect string,
+    > from_hours_in_effect string,
+    > to_hours_in_effect string,
+    > vehicle_color string,
+    > unregistered_vhicle string,
+    > vehicle_year int,
+    > meter_number string,
+    > feet_from_curb int,
+    > violation_post_code string,
+    > violation_description string,
+    > no_standing_or_stopping_violation string,
+    > hydrant_violation string,
+    > double_parking_violation string)
+    > stored as orc;
+OK
+Time taken: 0.391 seconds
+hive> from ny_csv insert overwrite table ny_orc select *;
+Query ID = cloudera_20230511111616_ad623684-6902-49ab-8e18-e116007dae6b
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1683822515126_0002, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1683822515126_0002/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1683822515126_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2023-05-11 11:17:08,705 Stage-1 map = 0%,  reduce = 0%
+2023-05-11 11:17:27,863 Stage-1 map = 25%,  reduce = 0%, Cumulative CPU 12.98 sec
+2023-05-11 11:17:40,641 Stage-1 map = 50%,  reduce = 0%, Cumulative CPU 25.0 sec
+2023-05-11 11:17:45,912 Stage-1 map = 62%,  reduce = 0%, Cumulative CPU 30.98 sec
+2023-05-11 11:17:52,278 Stage-1 map = 87%,  reduce = 0%, Cumulative CPU 36.93 sec
+2023-05-11 11:17:57,613 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 41.59 sec
+MapReduce Total cumulative CPU time: 41 seconds 590 msec
+Ended Job = job_1683822515126_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/ny_orc/.hive-staging_hive_2023-05-11_11-16-55_057_928345379291391400-1/-ext-10000
+Loading data to table default.ny_orc
+Table default.ny_orc stats: [numFiles=1, numRows=1127158, totalSize=40449571, rawDataSize=3160550460]
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1   Cumulative CPU: 41.59 sec   HDFS Read: 191897211 HDFS Write: 40449654 SUCCESS
+Total MapReduce CPU Time Spent: 41 seconds 590 msec
+OK
+Time taken: 66.018 seconds
+hive> select * from ny_orc limit 5;
+OK
+1413479741      60376MD NY      COM     NULL    46      DELV    MERCU   P       5430    10730   10780   0       0068    68      68      957457  0068    0000    0437P  KF       8301    4 AVE           0       408     F1              BBBBBBB ALL     ALL     BROWN   0       0       -       0
+1420174393      DMB5544 MI      PAS     NULL    40      SUBN    JEEP    P       36610   22190   13610   20180401        0030    30      30      962617  0030    0000   0550A            NY      F       529     W 142 ST                0       408     D               BBBBBBB ALL     ALL     BLK     0       2016    -       2
+1412114950      MCA0036 MD      PAS     NULL    21              INFIN   S       34050   10810   10910   0       0006    6       0       535036  MN02    0000    0846A  O343     WEST 14TH ST            0       408     D1              YYYYYYB 0830A   0900A   GRAY    0       0       -       0
+1412091640      GYP9103 NY      PAS     NULL    21      P-U     DODGE   S       10210   19350   19370   20170603        0023    23      0       540131  MN11    0000   0813A            NY      F       2205    3 AVENUE                0       408     D1              YYYYYYB 0800A   0830A   WHITE   0       2015    -       0
+1411613685      PG007G  FL      PAS     NULL    20      P-U     FORD    P       33730   77730   51030   0       0076    76      76      952287  0076    0000    0440A  KF       91      DOUGLASS ST             0       408     F1              BBBBBBB ALL     ALL     BK      0       0       -       0
+Time taken: 0.112 seconds, Fetched: 5 row(s)
+hive>
